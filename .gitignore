@@ -1,0 +1,11 @@
+# Backend
+backend/node_modules
+backend/.env
+
+# React Native / Expo
+TodoApp/node_modules
+TodoApp/.expo
+TodoApp/dist
+
+# OS
+.DS_Store
