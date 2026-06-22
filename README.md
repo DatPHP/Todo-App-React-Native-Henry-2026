@@ -1,31 +1,53 @@
 # 📝 TodoList App — React Native + Express + Neon Postgres
 
-Project React Native bằng cách xây dựng một ứng dụng Todo List thực tế, có kết nối backend và database thật (không dùng mock data).
+Dự án học React Native bằng cách xây dựng một ứng dụng Todo List thực tế, có kết nối backend và database thật (không dùng mock data).
 
 ## 🏗️ Kiến trúc
-[React Native App (Expo)] <--HTTP/REST--> [Backend API (Express)] <--SQL--> [Neon Postgres]
 React Native không thể kết nối trực tiếp tới Postgres (vì cần giấu connection string và driver `pg` cần Node.js runtime), nên cần một backend API đứng giữa.
+
+## ✨ Tính năng
+
+- ✅ Thêm / Sửa / Xóa / Hiển thị danh sách Todo
+- ✅ Mỗi Todo gồm: `title`, `type` (work / chores / homework / relaxing), `status` (hoàn thành / chưa hoàn thành), `due_date`
+- ✅ **Calendar filter**: chọn 1 ngày trên lịch để xem todo của ngày đó, có đánh dấu (mark) ngày có todo
+- ✅ Sắp xếp: todo chưa hoàn thành lên trước
+- ✅ Pull-to-refresh, optimistic UI update khi tick hoàn thành
+- ✅ Validate input (độ dài title, character counter)
+- ✅ Xử lý lỗi network rõ ràng (timeout, mất kết nối, hướng dẫn cách fix)
 
 ## 📁 Cấu trúc thư mục
 ```text
 todolist-app/
 
-├── backend/              # Express REST API
-│   ├── server.js         # Toàn bộ route CRUD cho /todos
-│   ├── db.js             # Kết nối Pool tới Neon Postgres
-│   ├── .env               # DATABASE_URL, PORT (KHÔNG commit lên git)
+├── backend/                  # Express REST API
+
+│   ├── server.js              # Toàn bộ route CRUD cho /todos
+
+│   ├── db.js                  # Kết nối Pool tới Neon Postgres
+
+│   ├── .env                    # DATABASE_URL, PORT (KHÔNG commit lên git)
+
 │   └── package.json
 
-└── TodoApp/               # React Native app (Expo)
-    ├── App.tsx             # Setup Navigation Stack
-    ├── types/Todo.ts       # Type định nghĩa Todo, TodoType
-    ├── services/api.ts     # Hàm gọi API (fetchTodos, createTodo, updateTodo, deleteTodo)
-    ├── screens/
-    │   ├── TodoListScreen.tsx   # Màn hình danh sách, FlatList, pull-to-refresh
-    │   └── TodoFormScreen.tsx   # Form Thêm/Sửa (dùng chung 1 component)
-    └── components/
-        └── TodoItem.tsx     # 1 dòng todo trong danh sách
+└── TodoApp/                   # React Native app (Expo)
+
+├── App.tsx                 # Setup Navigation Stack
+
+├── types/Todo.ts           # Type định nghĩa Todo, TodoType
+
+├── services/api.ts         # Hàm gọi API + xử lý lỗi network/timeout
+
+├── screens/
+
+│   ├── TodoListScreen.tsx  # Danh sách, Calendar filter, FlatList, sort
+
+│   └── TodoFormScreen.tsx  # Form Thêm/Sửa (dùng chung 1 component)
+
+└── components/
+
+└── TodoItem.tsx        # 1 dòng todo trong danh sách
 ```
+
 ## 🗄️ Database Schema (Neon Postgres)
 
 ```sql
@@ -80,8 +102,8 @@ Quét QR code bằng app **Expo Go** trên điện thoại (đảm bảo điện
 - [x] **Phase 1** — Backend API: Express + Neon Postgres (CRUD đầy đủ)
 - [x] **Phase 2** — React Native: Navigation, FlatList hiển thị danh sách, gọi API thật
 - [x] **Phase 3** — Form Thêm/Sửa/Xóa Todo, checkbox trạng thái hoàn thành
-- [ ] **Phase 4** — Calendar filter theo ngày
-- [ ] **Phase 5** — Polish UI, xử lý lỗi, kiểm thử
+- [x] **Phase 4** — Calendar filter theo ngày (react-native-calendars)
+- [x] **Phase 5** — Validate input, sort, xử lý lỗi network, polish UI
 
 ## 🧠 Khái niệm React Native đã học
 
@@ -89,9 +111,12 @@ Quét QR code bằng app **Expo Go** trên điện thoại (đảm bảo điện
 - `FlatList` — render list hiệu quả (virtualized), khác với `.map()` trong `View`
 - `@react-navigation` — Stack Navigator, type-safe navigation với TypeScript (`RootStackParamList`)
 - `useFocusEffect` — tự load lại data khi quay về màn hình (khác `useEffect` thường)
+- `useMemo` — cache kết quả tính toán (markedDates, sortedTodos), tránh tính lại không cần thiết mỗi lần re-render
 - Optimistic UI update — đổi UI ngay, gọi API ngầm, rollback nếu lỗi
 - `Platform.OS` — viết code khác nhau cho iOS/Android
 - `@react-native-community/datetimepicker` — native date picker
+- `react-native-calendars` — Calendar UI, markedDates, onDayPress
+- `AbortController` — timeout cho fetch request, tránh app bị treo loading vô thời hạn
 
 ## ⚠️ Lưu ý bảo mật
 
